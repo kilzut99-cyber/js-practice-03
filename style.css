@@ -1,0 +1,91 @@
+/* Базовые стили для Starter Kit */
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  margin: 20px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+h1, h3, h4 {
+  color: #222;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+input[type="number"], select {
+  flex: 1 1 120px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 8px 15px;
+  font-size: 1rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+button:hover {
+  background-color: #357ABD;
+}
+
+.result {
+  font-weight: bold;
+  margin-top: 10px;
+  min-height: 1.4em;
+  color: #2a7a2a;
+}
+
+.calculator-block {
+  margin-top: 15px;
+}
+
+.calculator-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.small-input {
+  width: 80px;
+}
+
+.card.info ul {
+  padding-left: 20px;
+  color: #444;
+}
+
+.card.info li {
+  margin-bottom: 6px;
+}

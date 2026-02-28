@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Практическая работа №3: Функции и Scope — Starter Kit</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎯 Практическая работа №3: Функции и Scope</h1>
+      <p class="subtitle">Starter Kit — сосредоточьтесь на JavaScript!</p>
+
+      <!-- Задание 1: Калькулятор ИМТ -->
+      <section class="card">
+        <h3>Задание 1: Калькулятор ИМТ (Function Declaration)</h3>
+        <div class="form-group">
+          <input type="number" id="weightBMI" placeholder="Вес (кг)" min="20" max="300" step="0.1" />
+          <input type="number" id="heightBMI" placeholder="Рост (см)" min="50" max="250" step="1" />
+          <button onclick="handleBMI()">Рассчитать ИМТ</button>
+        </div>
+        <p id="bmiResult" class="result"></p>
+      </section>
+
+      <!-- Задание 2: Конвертер веса -->
+      <section class="card">
+        <h3>Задание 2: Конвертер веса (Function Expression)</h3>
+        <div class="form-group">
+          <input type="number" id="weightInput" placeholder="Введите значение" min="0.1" max="1000" step="0.1" />
+          <div class="button-group">
+            <button onclick="handleKgToLbs()">кг → фунты</button>
+            <button onclick="handleLbsToKg()">фунты → кг</button>
+          </div>
+        </div>
+        <p id="weightResult" class="result"></p>
+      </section>
+
+      <!-- Задание 3: Калькулятор калорий -->
+      <section class="card">
+        <h3>Задание 3: Калькулятор калорий (BMR)</h3>
+        <div class="form-group">
+          <input type="number" id="weightBMR" placeholder="Вес (кг)" min="20" max="300" step="0.1" />
+          <input type="number" id="heightBMR" placeholder="Рост (см)" min="50" max="250" step="1" />
+          <input type="number" id="ageBMR" placeholder="Возраст (лет)" min="10" max="120" step="1" />
+          <select id="genderBMR">
+            <option value="">Выберите пол</option>
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+          </select>
+          <button onclick="handleBMR()">Рассчитать калории</button>
+        </div>
+        <p id="bmrResult" class="result"></p>
+      </section>
+
+      <!-- Задание 4: Конвертер роста -->
+      <section class="card">
+        <h3>Задание 4: Конвертер роста (Arrow Functions)</h3>
+        <div class="calculator-block">
+          <h4>📐 СМ → Футы + Дюймы</h4>
+          <div class="calculator-row">
+            <input type="number" id="heightInput" placeholder="Введите рост в см (например, 175)" min="50" max="250" step="1" />
+            <button type="button" onclick="handleCmToFeet()">Конвертировать</button>
+          </div>
+          <div id="heightResult" class="result"></div>
+        </div>
+        <div class="calculator-block">
+          <h4>📏 Футы + Дюймы → СМ</h4>
+          <div class="calculator-row" style="align-items: center;">
+            <input type="number" id="feetInput" placeholder="Футы (5)" min="0" max="8" step="1" class="small-input" />
+            <input type="number" id="inchesInput" placeholder="Дюймы (9)" min="0" max="11" step="1" class="small-input" />
+            <button type="button" onclick="handleFeetToCm()">Конвертировать</button>
+          </div>
+          <div id="heightResult2" class="result"></div>
+        </div>
+      </section>
+
+      <!-- Рекомендации -->
+      <section class="card info">
+        <h3>📋 Рекомендации по выполнению</h3>
+        <ul>
+          <li><strong>Комментарии обязательны!</strong> Объясняйте выбор типа функции</li>
+          <li>Используйте <code>console.log()</code> для отладки</li>
+          <li>Проверяйте ввод пользователя (пустые поля, отрицательные числа)</li>
+          <li>Готовьтесь к устной защите — понимание важнее кода!</li>
+        </ul>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
