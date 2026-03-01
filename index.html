@@ -3,31 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Практическая работа №3: Функции и Scope — Starter Kit</title>
+    <title>П.Р. №3: Функции и Scope</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h1>🎯 Практическая работа №3: Функции и Scope</h1>
-      <p class="subtitle">Starter Kit — сосредоточьтесь на JavaScript!</p>
+    <!-- Иконка переключения темы (Fixed: перемещается при прокрутке страницы) -->
+    <div id="themeToggle" class="theme-icon-toggle" title="Сменить тему">
+      🌙
+    </div>
 
-      <!-- Задание 1: Калькулятор ИМТ -->
+    <div class="container">
+      <header>
+        <!-- ТЕХНОЛОГИЯ: h1 привязан к CSS-переменной для смены цвета (черный/белый) -->
+        <h1 id="mainTitle">🎯 Практическая работа №3: Функции и Scope</h1>
+        <p class="subtitle">Starter Kit — сосредоточьтесь на JavaScript!</p>
+      </header>
+
+      <!-- Задание 1: ИМТ (Function Declaration) -->
       <section class="card">
-        <h3>Задание 1: Калькулятор ИМТ (Function Declaration)</h3>
-        <div class="form-group">
-          <input type="number" id="weightBMI" placeholder="Вес (кг)" min="20" max="300" step="0.1" />
-          <input type="number" id="heightBMI" placeholder="Рост (см)" min="50" max="250" step="1" />
+        <h3>Задание 1: ИМТ (Function Declaration)</h3>
+        <div class="form-vertical">
+          <!-- Атрибут title выводит подсказку диапазона при наведении курсора -->
+          <input
+            type="number"
+            id="weightBMI"
+            placeholder="Вес (кг)"
+            title="Допустимый диапазон: 20-300 кг"
+          />
+          <input
+            type="number"
+            id="heightBMI"
+            placeholder="Рост (см)"
+            title="Допустимый диапазон: 50-250 см"
+          />
           <button onclick="handleBMI()">Рассчитать ИМТ</button>
         </div>
         <p id="bmiResult" class="result"></p>
       </section>
 
-      <!-- Задание 2: Конвертер веса -->
+      <!-- Задание 2: Вес (Function Expression) -->
       <section class="card">
         <h3>Задание 2: Конвертер веса (Function Expression)</h3>
-        <div class="form-group">
-          <input type="number" id="weightInput" placeholder="Введите значение" min="0.1" max="1000" step="0.1" />
-          <div class="button-group">
+        <div class="form-vertical">
+          <input
+            type="number"
+            id="weightInput"
+            placeholder="Введите значение (>0)"
+            title="Введите число больше 0"
+          />
+          <div class="button-row">
             <button onclick="handleKgToLbs()">кг → фунты</button>
             <button onclick="handleLbsToKg()">фунты → кг</button>
           </div>
@@ -35,13 +59,28 @@
         <p id="weightResult" class="result"></p>
       </section>
 
-      <!-- Задание 3: Калькулятор калорий -->
+      <!-- Задание 3: Калории (BMR + Scope) -->
       <section class="card">
-        <h3>Задание 3: Калькулятор калорий (BMR)</h3>
-        <div class="form-group">
-          <input type="number" id="weightBMR" placeholder="Вес (кг)" min="20" max="300" step="0.1" />
-          <input type="number" id="heightBMR" placeholder="Рост (см)" min="50" max="250" step="1" />
-          <input type="number" id="ageBMR" placeholder="Возраст (лет)" min="10" max="120" step="1" />
+        <h3>Задание 3: Калории (BMR)</h3>
+        <div class="form-vertical">
+          <input
+            type="number"
+            id="weightBMR"
+            placeholder="Вес (кг)"
+            title="20-300 кг"
+          />
+          <input
+            type="number"
+            id="heightBMR"
+            placeholder="Рост (см)"
+            title="50-250 см"
+          />
+          <input
+            type="number"
+            id="ageBMR"
+            placeholder="Возраст (лет)"
+            title="10-120 лет"
+          />
           <select id="genderBMR">
             <option value="">Выберите пол</option>
             <option value="male">Мужской</option>
@@ -52,40 +91,90 @@
         <p id="bmrResult" class="result"></p>
       </section>
 
-      <!-- Задание 4: Конвертер роста -->
+      <!-- Задание 4: Конвертер роста (Arrow Functions) -->
       <section class="card">
         <h3>Задание 4: Конвертер роста (Arrow Functions)</h3>
         <div class="calculator-block">
-          <h4>📐 СМ → Футы + Дюймы</h4>
-          <div class="calculator-row">
-            <input type="number" id="heightInput" placeholder="Введите рост в см (например, 175)" min="50" max="250" step="1" />
-            <button type="button" onclick="handleCmToFeet()">Конвертировать</button>
+          <p class="label">📐 СМ → Футы + Дюймы</p>
+          <div class="form-vertical">
+            <input
+              type="number"
+              id="heightInput"
+              placeholder="178 см"
+              title="Диапазон: 50-250 см"
+            />
+            <button onclick="handleCmToFeet()">Конвертировать</button>
           </div>
-          <div id="heightResult" class="result"></div>
+          <p id="heightResult" class="result"></p>
         </div>
-        <div class="calculator-block">
-          <h4>📏 Футы + Дюймы → СМ</h4>
-          <div class="calculator-row" style="align-items: center;">
-            <input type="number" id="feetInput" placeholder="Футы (5)" min="0" max="8" step="1" class="small-input" />
-            <input type="number" id="inchesInput" placeholder="Дюймы (9)" min="0" max="11" step="1" class="small-input" />
-            <button type="button" onclick="handleFeetToCm()">Конвертировать</button>
+        <div class="calculator-block divider">
+          <p class="label">📏 Футы + Дюймы → СМ</p>
+          <div class="form-vertical">
+            <div class="input-row">
+              <input
+                type="number"
+                id="feetInput"
+                placeholder="Футы"
+                title="Диапазон: 1-8"
+              />
+              <input
+                type="number"
+                id="inchesInput"
+                placeholder="Дюймы"
+                title="Диапазон: 0-11"
+              />
+            </div>
+            <button onclick="handleFeetToCm()">Конвертировать</button>
           </div>
-          <div id="heightResult2" class="result"></div>
+          <p id="heightResult2" class="result"></p>
         </div>
+        <!-- Постоянная запись критериев внизу блока (не исчезает) -->
+        <p class="hint-static">
+          Критерии: стрелочные функции, валидация (рост 50-250 см, дюймы 0-11),
+          формат 5'9"
+        </p>
       </section>
 
+      <!-- Задание 5: Валидатор (Closures) -->
+      <div class="level-badge-pro">🔴 УРОВЕНЬ «PRO»</div>
+      <section class="card">
+        <h3>Задание 5: Валидатор с замыканием (Closures)</h3>
+        <div class="form-vertical">
+          <input
+            type="number"
+            id="weightPro"
+            placeholder="Вес (кг)"
+            title="Замыкание: 20-300 кг"
+          />
+          <input
+            type="number"
+            id="heightPro"
+            placeholder="Рост (см)"
+            title="Замыкание: 50-250 см"
+          />
+          <button class="btn-gradient" onclick="handleProValidation()">
+            Проверить данные
+          </button>
+        </div>
+        <p id="proResult" class="result"></p>
+      </section>
+      
       <!-- Рекомендации -->
       <section class="card info">
         <h3>📋 Рекомендации по выполнению</h3>
         <ul>
-          <li><strong>Комментарии обязательны!</strong> Объясняйте выбор типа функции</li>
+          <li>
+            <strong>Комментарии обязательны!</strong> Объясняйте выбор типа
+            функции
+          </li>
           <li>Используйте <code>console.log()</code> для отладки</li>
-          <li>Проверяйте ввод пользователя (пустые поля, отрицательные числа)</li>
+          <li>
+            Проверяйте ввод пользователя (пустые поля, отрицательные числа)
+          </li>
           <li>Готовьтесь к устной защите — понимание важнее кода!</li>
         </ul>
       </section>
     </div>
-
     <script src="script.js"></script>
   </body>
 </html>
