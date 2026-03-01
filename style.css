@@ -54,6 +54,40 @@ h3 {
   padding-bottom: 10px; margin-bottom: 20px; margin-top: 0; 
 }
 
+/* Бейдж уровня БАЗА */
+.level-badge-base {
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.2);
+}
+
+/* Бейдж уровня JUNIOR */
+.level-badge-junior {
+    background: linear-gradient(90deg, #f16cb5, #f59df5);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(236, 232, 3, 0.2);
+}
+
+/* Общая анимация появления для бейджей (опционально) */
+.level-badge-base, .level-badge-junior {
+    animation: fadeInDown 0.5s ease-out;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* ФОРМА: Вертикальное расположение полей через flex-direction */
 .form-vertical { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
 .button-row, .input-row { display: flex; gap: 10px; }

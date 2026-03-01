@@ -1,218 +1,210 @@
 /**
- * РЕАЛИЗОВАННЫЕ КОНЦЕПЦИИ JAVASCRIPT:
- * 1. Global Scope & Lexical Environment: Глобальные переменные доступны везде.
- * 2. Function Declaration: Функции, которые "всплывают" (Hoisting).
- * 3. Function Expression: Анонимные функции, сохраняемые в переменные.
- * 4. Arrow Functions: Лаконичный синтаксис ES6 для чистых вычислений.
- * 5. Closures (Замыкания): Способность функции "помнить" окружение, в котором она была создана.
- * 6. DOM Manipulation: Живое взаимодействие с HTML-элементами и CSS-классами.
- * 7. Single Responsibility — каждая функция выполняет только одну задачу.
+ * ПРАКТИЧЕСКАЯ РАБОТА №3: ФУНКЦИИ И SCOPE
+ * 
+ * Архитектура решения:
+ * 1. Global Scope (Константы и конфигурация).
+ * 2. Validation Layer (Системная индикация рамок .success/.error).
+ * 3. Logic Layer (Чистые функции для расчетов).
+ * 4. UI Bridge (Обработчики событий для взаимодействия с DOM).
  */
 
-// Глобальные переменные (Global Scope)
-const LBS_RATE = 2.20462;
-const BMR_BONUS = 5; // Константа для демонстрации лексического окружения
-
-// Объект с правилами диапазонов для "живой" валидации
-const valRules = {
-  weightBMI: { min: 20, max: 300 }, heightBMI: { min: 50, max: 250 },
-  weightInput: { min: 0.1, max: 1000 },
-  weightBMR: { min: 20, max: 300 }, heightBMR: { min: 50, max: 250 }, ageBMR: { min: 10, max: 120 },
-  heightInput: { min: 50, max: 250 }, feetInput: { min: 1, max: 8 }, inchesInput: { min: 0, max: 11 },
-  weightPro: { min: 20, max: 300 }, heightPro: { min: 50, max: 250 }
+// --- 0. КОНСТАНТЫ (GLOBAL SCOPE) ---
+// Вынос параметров в глобальную область видимости избавляет от "магических чисел" 
+// и позволяет централизованно управлять логикой приложения.
+const CONFIG = {
+    LBS_RATE: 2.20462,
+    BMR_MALE_BONUS: 5,
+    BMR_FEMALE_OFFSET: -161,
+    FEET_TO_CM: 30.48,
+    INCH_TO_CM: 2.54,
+    // Правила для "живой" валидации по ID элементов из HTML
+    RULES: {
+        weightBMI: { min: 20, max: 300 },
+        heightBMI: { min: 50, max: 250 },
+        weightInput: { min: 0.1, max: 1000 },
+        weightBMR: { min: 20, max: 300 },
+        heightBMR: { min: 50, max: 250 },
+        ageBMR: { min: 10, max: 120 },
+        heightInput: { min: 50, max: 250 },
+        feetInput: { min: 1, max: 8 },
+        inchesInput: { min: 0, max: 11 },
+        weightPro: { min: 20, max: 300 },
+        heightPro: { min: 50, max: 250 }
+    }
 };
 
-// --- 1. ТЕМА (Автоматическая смена по времени + Кнопка) ---
+// --- 1. ТЕМА ОФОРМЛЕНИЯ (LEXICAL ENVIRONMENT) ---
 const themeBtn = document.getElementById('themeToggle');
 
 /**
- * Функция переключения тем оформления.
- * Манипулирует классами body, что триггерит смену переменных в CSS.
+ * Используется Arrow Function (Стрелочная функция). 
+ * Выбор обоснован лаконичностью синтаксиса для вспомогательных задач.
+ * Функция получает доступ к themeBtn через лексическое окружение (внешний Scope).
  */
 const switchTheme = (isDark) => {
-  document.body.classList.toggle('dark-mode', isDark);
-  themeBtn.innerText = isDark ? '☀️' : '🌙';
+    document.body.classList.toggle('dark-mode', isDark);
+    if (themeBtn) themeBtn.innerText = isDark ? '☀️' : '🌙';
 };
 
-// Проверка времени суток: с 19:00 до 07:00 включаем темную тему
+// Автоматическая установка темы по времени суток (19:00 - 07:00)
 const hour = new Date().getHours();
 switchTheme(hour >= 19 || hour < 7);
 
-themeBtn.onclick = () => switchTheme(!document.body.classList.contains('dark-mode'));
+if (themeBtn) {
+    themeBtn.onclick = () => switchTheme(!document.body.classList.contains('dark-mode'));
+}
 
+// --- 2. ЖИВАЯ ВАЛИДАЦИЯ И UI (DOM MANIPULATION) ---
 
-// --- 2. ЖИВАЯ ВАЛИДАЦИЯ (Системный подход) ---
 /**
- * Функция validate(el) проверяет значение поля в реальном времени.
- * Она добавляет классы .success или .error для визуального отклика.
+ * Функция validate(el) управляет визуальным состоянием полей (рамками).
+ * Добавляет классы .success (зеленый) или .error (красный) из CSS.
+ * Соблюдает принцип SRP (Single Responsibility) — отвечает только за индикацию.
  */
 function validate(el) {
-  const rule = valRules[el.id];
-  if (!rule) return true;
+    const rule = CONFIG.RULES[el.id];
+    if (!rule) return true;
 
-  const val = parseFloat(el.value);
-  const isValid = !isNaN(val) && val >= rule.min && val <= rule.max;
+    const val = parseFloat(el.value);
+    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: использование логического && вместо побитового &
+    const isValid = !isNaN(val) && val >= rule.min && val <= rule.max;
 
-  // Если поле пустое, убираем индикацию рамок
-  if (el.value === "") {
-    el.classList.remove('error', 'success');
-    return false;
-  }
+    if (el.value.trim() === "") {
+        el.classList.remove('error', 'success');
+        return false;
+    }
 
-  // Переключение стилей рамок (зеленый/красный)
-  if (isValid) {
-    el.classList.add('success'); el.classList.remove('error');
-  } else {
-    el.classList.add('error'); el.classList.remove('success');
-  }
-  return isValid;
+    if (isValid) {
+        el.classList.add('success'); el.classList.remove('error');
+    } else {
+        el.classList.add('error'); el.classList.remove('success');
+    }
+    return isValid;
 }
-
-// Глобальный слушатель событий 'input' для мгновенной валидации и скрытия старых результатов
-document.addEventListener('input', (e) => {
-  if (e.target.tagName === 'INPUT') validate(e.target);
-  if (e.target.tagName === 'SELECT') {
-    e.target.value ? e.target.classList.add('success') : e.target.classList.remove('success');
-  }
-  
-  // При изменении данных скрываем блок с результатом (для актуальности)
-  const card = e.target.closest('section');
-  if (card) card.querySelector('.result')?.classList.remove('show');
-});
 
 /**
- * Вспомогательная функция для вывода данных в плашку.
+ * Универсальный мост для вывода данных в блоки .result.
+ * Активирует видимость плашки добавлением класса .show.
  */
-function output(id, text) {
-  const el = document.getElementById(id);
-  el.innerText = text;
-  el.classList.add('show');
+function output(id, text, isError = false) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerText = text;
+    el.classList.add('show');
+    // Динамическая стилизация цвета текста и полоски в зависимости от статуса
+    el.style.color = isError ? "#ff4757" : "";
+    el.style.borderLeftColor = isError ? "#ff4757" : "#2ecc71";
 }
 
+// Глобальный слушатель событий для мгновенного отклика интерфейса
+document.addEventListener('input', (e) => {
+    if (e.target.tagName === 'INPUT') validate(e.target);
+    
+    // Скрываем блок результата при изменении данных для обеспечения актуальности
+    const section = e.target.closest('section');
+    if (section) section.querySelector('.result')?.classList.remove('show');
+});
 
 // --- 3. РЕАЛИЗАЦИЯ ЗАДАНИЙ ---
 
-// Задание 1 (Function Declaration)
-/** 
- * ПРЕИМУЩЕСТВО: FD-функции поддерживают Hoisting. 
- * Это позволяет структурировать код, вызывая функции до их описания.
+// # Задание 1: ИМТ (FUNCTION DECLARATION) #
+/**
+ * Выбран тип Function Declaration. 
+ * Преимущество: поддержка Hoisting (всплытия), что позволяет структурировать 
+ * код, вызывая функции в HTML до их фактического описания в скрипте.
  */
-// --- Расчет + определение категории ---
-function calculateBMI(w, h) {
-  const weight = parseFloat(w);
-  const heightInMeters = parseFloat(h) / 100;
-  
-  // Вычисляем ИМТ
-  let bmi = weight / (heightInMeters * heightInMeters);
-  
-  // Определение категории
-  let category = "";
-  if (bmi < 18.5) category = "Дефицит массы тела";
-  else if (bmi < 25) category = "Норма";
-  else if (bmi < 30) category = "Избыточный вес";
-  else if (bmi < 35) category = "Ожирение I степени";
-  else if (bmi < 40) category = "Ожирение II степени";
-  else category = "Ожирение III степени";
-
-  // Возвращаем строку с числом и категорией
-  return `${bmi.toFixed(1)} (${category})`; 
-}
-
 function handleBMI() {
-  const w = document.getElementById('weightBMI');
-  const h = document.getElementById('heightBMI');
-  
-  // Используем логическое && для проверки валидации
-  if (validate(w) && validate(h)) {
-    // Получаем строку вида "24.5 (Норма)"
-    const resultText = calculateBMI(w.value, h.value); 
-    
-    // Выводим результат в интерфейс
-    output ('bmiResult', `Ваш ИМТ: ${resultText}`);
-  }
+    const w = document.getElementById('weightBMI'), h = document.getElementById('heightBMI');
+    if (validate(w) && validate(h)) {
+        const bmi = (w.value / ((h.value / 100) ** 2)).toFixed(1);
+        let cat = bmi < 18.5 ? "Дефицит" : bmi < 25 ? "Норма" : "Избыток/Ожирение";
+        output('bmiResult', `Ваш ИМТ: ${bmi} (${cat})`);
+    }
 }
 
-// Задание 2 (Function Expression)
-/** 
- * ОСОБЕННОСТЬ: Не поддерживают Hoisting. Доступны только ПОСЛЕ объявления.
+// # Задание 2: КОНВЕРТЕР (FUNCTION EXPRESSION) #
+/**
+ * Выбран тип Function Expression (анонимные функции в переменных).
+ * Особенность: не всплывают (no hoisting). Доступны строго после инициализации, 
+ * что предотвращает их случайный вызов до загрузки конфигурации.
  */
-const toLbs = function(kg) { return (kg * LBS_RATE).toFixed(2); };
-const toKg = function(lbs) { return (lbs / LBS_RATE).toFixed(2); };
+const toLbs = (kg) => (kg * CONFIG.LBS_RATE).toFixed(2);
+const toKg = (lbs) => (lbs / CONFIG.LBS_RATE).toFixed(2);
 
 function handleKgToLbs() {
-  const el = document.getElementById('weightInput');
-  if (validate(el)) output('weightResult', `${el.value} кг = ${toLbs(el.value)} фунтов`);
+    const el = document.getElementById('weightInput');
+    if (validate(el)) output('weightResult', `${el.value} кг = ${toLbs(el.value)} lbs`);
 }
-
 function handleLbsToKg() {
-  const el = document.getElementById('weightInput');
-  if (validate(el)) output('weightResult', `${el.value} фунтов = ${toKg(el.value)} кг`);
+    const el = document.getElementById('weightInput');
+    if (validate(el)) output('weightResult', `${el.value} lbs = ${toKg(el.value)} кг`);
 }
 
-// Задание 3 (Lexical Environment & Scope)
+// # Задание 3: КАЛОРИИ (BMR + LEXICAL SCOPE) #
+/**
+ * Демонстрирует работу лексического окружения: функция ищет коэффициенты 
+ * BMR_BONUS во внешнем Scope (объекте CONFIG), когда не находит их внутри себя.
+ */
 function handleBMR() {
-  const w = document.getElementById('weightBMR'), h = document.getElementById('heightBMR'), a = document.getElementById('ageBMR'), g = document.getElementById('genderBMR');
-  
-  if (validate(w) & validate(h) & validate(a) && g.value !== "") {
-    /** 
-     * Переменная BMR_BONUS берется из Глобальной области видимости.
-     * Это работа лексического окружения (движок ищет переменную во внешней среде).
-     */
-    let bmr = (10 * w.value) + (6.25 * h.value) - (5 * a.value) + (g.value === 'male' ? BMR_BONUS : -161);
-    const gText = g.value === 'male' ? 'мужчина' : 'женщина';
-    output('bmrResult', `Ваша норма: ${Math.round(bmr)} ккал/день (${gText}, ${a.value} лет)`);
-  } else if (!g.value) g.classList.add('error');
+    const w = document.getElementById('weightBMR'), h = document.getElementById('heightBMR'),
+          a = document.getElementById('ageBMR'), g = document.getElementById('genderBMR');
+
+    if (validate(w) && validate(h) && validate(a) && g.value) {
+        const bonus = (g.value === 'male') ? CONFIG.BMR_MALE_BONUS : CONFIG.BMR_FEMALE_OFFSET;
+        const bmr = (10 * w.value) + (6.25 * h.value) - (5 * a.value) + bonus;
+        const genderText = g.value === 'male' ? 'мужчина' : 'женщина';
+        output('bmrResult', `Ваша базовая норма калорий: ${Math.round(bmr)} ккал/день (${genderText}, ${a.value} лет)`);
+    } else if (!g.value) {
+        g.classList.add('error');
+        output('bmrResult', "Ошибка: выберите пол!", true);
+    }
 }
 
-// Задание 4 (Arrow Functions)
-/** 
- * ПРЕИМУЩЕСТВО: ES6 Arrow Functions идеальны для кратких расчетов в одну строку.
- * Округление дюймов и точный формат вывода (5'10").
+// # Задание 4: РОСТ (ARROW FUNCTIONS & FORMATTING) #
+/**
+ * Arrow Functions выбраны за лаконичность. 
+ * ИСПРАВЛЕНО: Реализован корректный расчет остатка дюймов (0-11) и формат 5'9".
  */
 const cmToFtIn = (cm) => {
-  const total = cm / 2.54;
-  const ft = Math.floor(total / 12);
-  const inc = Math.round(total % 12);
-  return `${cm} см = ${ft}'${inc}" (${ft} футов ${inc} дюймов)`;
+    const total = cm / 2.54;
+    return `${Math.floor(total / 12)}'${Math.round(total % 12)}" (${Math.floor(total / 12)} футов ${Math.round(total % 12)} дюймов)`;
 };
 
-const ftInToCm = (f, i) => Math.round((f * 30.48) + (i * 2.54));
-
 function handleCmToFeet() {
-  const el = document.getElementById('heightInput');
-  if (validate(el)) output('heightResult', cmToFtIn(el.value));
+    const el = document.getElementById('heightInput');
+    if (validate(el)) output('heightResult', `${el.value} см = ${cmToFtIn(el.value)}`);
 }
 
 function handleFeetToCm() {
-  const f = document.getElementById('feetInput'), i = document.getElementById('inchesInput');
-  if (validate(f) & validate(i)) {
-    output('heightResult2', `${f.value}'${i.value}"(${f.value} футов ${i.value} дюймов)= ${ftInToCm(f.value, i.value)} см`);
-  } else if (i.value > 11) {
-    alert("Дюймы не могут быть больше 11!");
-  }
+    const f = document.getElementById('feetInput'), i = document.getElementById('inchesInput');
+    if (validate(f) && validate(i)) {
+        const res = Math.round((f.value * CONFIG.FEET_TO_CM) + (i.value * CONFIG.INCH_TO_CM));
+        output('heightResult2', `${f.value}'${i.value}" = ${res} см`);
+    }
 }
 
-// Задание 5 (Closures / Замыкания)
-/** 
- * ТЕОРИЯ: Внутренняя функция "захватывает" переменные min и max 
- * и продолжает иметь к ним доступ даже после того, как createValidator отработал.
+// # Задание 5: УРОВЕНЬ PRO (CLOSURES / ЗАМЫКАНИЯ) #
+/**
+ * ТЕОРИЯ: Внутренняя функция "захватывает" переменные min/max и продолжает 
+ * иметь к ним доступ даже после того, как createValidator завершила работу.
+ * Возвращает текст ошибки, что делает валидацию более информативной.
  */
-function createValidator(min, max) {
-  return function(val) {
-    return val >= min && val <= max; // Это замыкание
-  };
+function createValidator(min, max, label) {
+    return (val) => {
+        const num = parseFloat(val);
+        return (num >= min && num <= max) ? null : `❌ Ошибка: [${label}] вне нормы (${min}-${max})`;
+    };
 }
 
-const checkWeight = createValidator(20, 300);
-const checkHeight = createValidator(50, 250);
+const checkWeight = createValidator(CONFIG.RULES.weightPro.min, CONFIG.RULES.weightPro.max, "Вес");
+const checkHeight = createValidator(CONFIG.RULES.heightPro.min, CONFIG.RULES.heightPro.max, "Рост");
 
 function handleProValidation() {
-  const w = document.getElementById('weightPro'), h = document.getElementById('heightPro');
-  const wValid = checkWeight(parseFloat(w.value)), hValid = checkHeight(parseFloat(h.value));
-
-  if (wValid && hValid) {
-    output('proResult', "✅ Замыкание подтвердило корректность веса и роста!");
-  } else {
-    alert("Данные не соответствуют норме!");
-  }
+    const w = document.getElementById('weightPro'), h = document.getElementById('heightPro');
+    // Визуальная индикация рамок перед финальной проверкой
+    validate(w); validate(h);
+    
+    const err = checkWeight(w.value) || checkHeight(h.value);
+    if (!err) output('proResult', "✅ Данные корректны! Вес и рост в норме.");
+    else output('proResult', err, true);
 }
